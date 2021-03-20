@@ -21,7 +21,7 @@
 
 /* Builtins*/
 #include "builtin/exit.h"
-#include "builtin/cwd.h"
+#include "builtin/pwd.h"
 #include "builtin/cd.h"
 
 
@@ -139,7 +139,7 @@ int shell::Command::Execute() {
 
 shell::Shell::Shell(int argc, char ** argv) {
   builtin::RegisterBuiltin("exit", builtin::builtin_exit);
-  builtin::RegisterBuiltin("cwd", builtin::builtin_cwd);
+  builtin::RegisterBuiltin("pwd", builtin::builtin_pwd);
   builtin::RegisterBuiltin("cd", builtin::builtin_cd);
 }
 

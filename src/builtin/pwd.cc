@@ -1,4 +1,4 @@
-#include "builtin/cwd.h"
+#include "builtin/pwd.h"
 #include "shell.h"
 #include "logging/log.h"
 
@@ -11,7 +11,7 @@
 constexpr int kCwdBufferSize = 128;
 
 
-int builtin::builtin_cwd(void* shptr, char** args, int argc) {
+int builtin::builtin_pwd(void* shptr, char** args, int argc) {
   shell::Shell* sh = static_cast<shell::Shell*>(shptr);
   char* buffer = new char[kCwdBufferSize];
 
