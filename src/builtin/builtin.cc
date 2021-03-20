@@ -15,8 +15,8 @@ bool builtin::BuiltinExists(std::string name) {
 }
 
 
-int builtin::RunBuiltin(std::string name, void* shptr, char** args) {
+int builtin::RunBuiltin(std::string name, void* shptr, char** args, int argc) {
   BuiltinFunction function = builtins.at(name);
-  return function(shptr, args);
+  return function(shptr, args, argc);
 }
 

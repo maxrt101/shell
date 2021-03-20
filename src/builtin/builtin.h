@@ -1,7 +1,6 @@
 #ifndef SHELL_BUILTIN_BUILTIN_H_
 #define SHELL_BUILTIN_BUILTIN_H_
 
-#include <vector>
 #include <string>
 
 #include "parser/tokens.h"
@@ -9,7 +8,7 @@
 
 namespace builtin {
 
-typedef int (*BuiltinFunction)(void*, char**);
+typedef int (*BuiltinFunction)(void*, char**, int);
 
 
 /** RegisterBuiltin(string, BuiltinFunction) - registers builtin internally
@@ -30,7 +29,7 @@ bool BuiltinExists(std::string name);
  * `shptr` - pointer to shell::Shell instance
  * `args` - ref to vector of tokens (parsed arguments)
  */
-int RunBuiltin(std::string name, void* shptr, char** args);
+int RunBuiltin(std::string name, void* shptr, char** args, int argc);
 
 } // namespace builtin
 

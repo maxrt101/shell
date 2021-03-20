@@ -12,7 +12,7 @@ namespace parser {
  * On error - last token of returning vector will be TOKEN_ERROR
  * .str of that token will be the error message
  */
-/*TokenArray*/ std::vector<Token> SplitLine(std::string& line);
+std::vector<Token> SplitLine(std::string& line);
 
 } // namespace parser
 

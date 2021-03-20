@@ -11,7 +11,7 @@
 constexpr int kCwdBufferSize = 128;
 
 
-int builtin::builtin_cwd(void* shptr, char** args) {
+int builtin::builtin_cwd(void* shptr, char** args, int argc) {
   shell::Shell* sh = static_cast<shell::Shell*>(shptr);
   char* buffer = new char[kCwdBufferSize];
 

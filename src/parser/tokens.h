@@ -40,10 +40,6 @@ struct Token {
     type = rhs.type;
     str = std::string(rhs.str);
   }
-
-  inline ~Token() {
-    //std::cout << "~Token(): " << this << " " << &str << " " << (int*)str.c_str() << "\n";
-  }
 };
 
 } // namespace parser

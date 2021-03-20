@@ -5,7 +5,7 @@
 
 namespace builtin {
 
-int builtin_cwd(void* shptr, char** args);
+int builtin_cwd(void* shptr, char** args, int argc);
 
 } // builtin
 

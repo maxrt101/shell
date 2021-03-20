@@ -20,8 +20,9 @@
 #include "parser/scanner.h"
 
 /* Builtins*/
-#include "builtin/cwd.h"
 #include "builtin/exit.h"
+#include "builtin/cwd.h"
+#include "builtin/cd.h"
 
 
 constexpr auto kDefaultPrompt = "$ ";
@@ -80,7 +81,7 @@ int shell::Command::Execute() {
   for (auto& cmd : commands) {
     std::string cmd_name = std::string(cmd.args[0]);
     if (builtin::BuiltinExists(cmd_name)) {
-      builtin::RunBuiltin(cmd_name, (void*)this, cmd.args);
+      builtin::RunBuiltin(cmd_name, (void*)this, cmd.args, cmd.size);
       continue;
     }
     
@@ -139,6 +140,7 @@ int shell::Command::Execute() {
 shell::Shell::Shell(int argc, char ** argv) {
   builtin::RegisterBuiltin("exit", builtin::builtin_exit);
   builtin::RegisterBuiltin("cwd", builtin::builtin_cwd);
+  builtin::RegisterBuiltin("cd", builtin::builtin_cd);
 }
 
 

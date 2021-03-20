@@ -8,8 +8,6 @@ using namespace parser; // to shorten the code; shouldn't be a problem
 
 
 struct ScannerState {
-  //const char* start;
-  //const char* current;
   std::string::iterator start;
   std::string::iterator current;
 } scanner_state;
@@ -113,18 +111,16 @@ static Token ScanToken() {
     case '{': return MakeToken(TOKEN_LEFT_BRACE);
     case '}': return MakeToken(TOKEN_RIGHT_BRACE);
     case ';': return MakeToken(TOKEN_SEMICOLON);
-    // case '.': return MakeToken(TOKEN_DOT);
     case '>': return MakeToken(TOKEN_GREATER);
     case '<': return MakeToken(TOKEN_LESS);
     case '|': return MakeToken(TOKEN_PIPE);
     case '&': return MakeToken(TOKEN_AMPERSAND);
     case '"': return String();
     default:  return Word();
-    // return ErrorToken("Unexpected characted");
   }
 }
 
-/*TokenArray*/ std::vector<parser::Token> parser::SplitLine(std::string& line) {
+std::vector<parser::Token> parser::SplitLine(std::string& line) {
   scanner_state.start = line.begin();
   scanner_state.current = line.begin();
 

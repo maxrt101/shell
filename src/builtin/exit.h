@@ -5,7 +5,7 @@
 
 namespace builtin {
 
-int builtin_exit(void* shptr, char** args);
+int builtin_exit(void* shptr, char** args, int argc);
 
 } // namespace builtin
 
