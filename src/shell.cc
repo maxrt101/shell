@@ -3,8 +3,10 @@
 #include <vector>
 #include <cstring>
 #include <cstdlib>
+#include <fstream>
 #include <iterator>
 #include <iostream>
+#include <streambuf>
 
 #include <fcntl.h>
 #include <errno.h>
@@ -18,6 +20,7 @@
 
 #include "logging/log.h"
 #include "parser/scanner.h"
+#include "utils/die.h"
 
 /* Builtins*/
 #include "builtin/exit.h"
@@ -203,13 +206,34 @@ void shell::Shell::ParseLine(std::string input) {
   std::vector<parser::Token> tokens = parser::SplitLine(input);
   if (tokens.size() == 0) return;
 
+  // std::cout << "CMD:" << tokens.size() << "\n";
+  // for (auto& token : tokens) std::cout << "\t" << static_cast<int>(token.type) << " " << token.str << "\n";
+
   if (tokens.back().type == parser::TOKEN_ERROR) {
     logging::error("Error parsing command '%s': %s", input.c_str(), tokens.back().str.data());
     return;
   }
 
+  if (tokens.size() > 1) {
+    if (tokens[1].type == parser::TOKEN_EQUALS) {
+      std::string value;
+      for (int i = 2; i < tokens.size(); i++) {
+        value += tokens[i].str;
+      }
+      SetVar(tokens[0].str, value);
+      return;
+    }
+  }
+
   Command cmd;
   std::vector<parser::Token>::iterator beg = tokens.begin();
+
+  /** In this for loop you can see a lot of erasing, so I will try to explain that part.
+   * The erasing is done prevent shell utility tokens, like '>' or '$', appearing in actual command
+   * If we don't erase theese tokens, they will appear in commad arguments, because arguments
+   * are constructed from 2 iterators(this is basically a range), and that iterators don't skip 
+   * utility tokens by default, they just iterate over token vector.
+   */
 
   for (auto itr = tokens.begin(); itr != tokens.end(); itr++) {
     if (itr->type == parser::TOKEN_PIPE) {
@@ -217,15 +241,39 @@ void shell::Shell::ParseLine(std::string input) {
       beg = itr+1;
     } else if (itr->type == parser::TOKEN_AMPERSAND) {
       cmd.background = true;
+      tokens.erase(itr--); // Erase '&' from token vector
     } else if (itr->type == parser::TOKEN_GREATER) {
-      cmd.out_file = (++itr)->str;
+      cmd.out_file = (itr+1)->str;
+      // Erase '>' and file name from token vector
+      auto here = itr--;
+      tokens.erase(here, here+2); 
     } else if (itr->type == parser::TOKEN_LESS) {
-      cmd.in_file = (++itr)->str;
-    } else if (itr->type == parser::TOKEN_EOF) {} 
+      cmd.in_file = (itr+1)->str;
+      // Erase '<' and file name from token vector
+      auto here = itr--;
+      tokens.erase(here, here+2); 
+    } else if (itr->type == parser::TOKEN_DOLLAR) {
+      auto next = itr+1; 
+      itr->str = GetVar(next->str);
+      tokens.erase(next); // Erase '$' from token vector
+    } else if (itr->type == parser::TOKEN_NESTED) {
+      /* FIXME: This clearly doesn't work as it should have,
+       * mainly because writing to file creates otherwise unintended newlines
+       * output should be redirected in some other way
+       * TODO: Consider pipe */
+      std::string tmp_file_name = "/tmp/shell_" + std::to_string(getpid()); // unique file name using PID
+      std::string nested_cmd = itr->str;
+      nested_cmd += " > " + tmp_file_name;
+      ParseLine(nested_cmd);
+      std::ifstream tmp_file(tmp_file_name);
+      std::string nested_result((std::istreambuf_iterator<char>(tmp_file)),
+                                 std::istreambuf_iterator<char>());
+      itr->str = nested_result;             // TODO: maybe std::move()?
+      itr->type = parser::TOKEN_IDENTIFIER; // Set another type to prevent infinite loop
+    }
   }
 
   cmd.commands.push_back(SimpleCommand(beg, tokens.end()));
-
   cmd.Execute();
 }
 

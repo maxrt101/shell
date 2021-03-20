@@ -17,6 +17,10 @@ static bool IsAtEnd() {
   return *scanner_state.current == '\0';
 }
 
+static void SkipToCurrent() {
+  scanner_state.start = scanner_state.current;
+}
+
 static Token MakeToken(TokenType type) {
   Token token;
   token.type = type;
@@ -65,7 +69,18 @@ static void SkipWhitespace() {
   }
 }
 
-static Token String() {
+static Token SingleQuotedString() {
+  while (Peek() != '\'' && !IsAtEnd()) {
+    Advance();
+  }
+
+  if (IsAtEnd()) return ErrorToken("Unterminated string.");
+
+  Advance();
+  return MakeToken(TOKEN_STRING);
+}
+
+static Token DoubleQuotedString() {
   while (Peek() != '"' && !IsAtEnd()) {
     Advance();
   }
@@ -106,17 +121,31 @@ static Token ScanToken() {
   if (isdigit(c)) return Number();
 
   switch (c) {
-    case '(': return MakeToken(TOKEN_LEFT_PAREN);
-    case ')': return MakeToken(TOKEN_RIGHT_PAREN);
-    case '{': return MakeToken(TOKEN_LEFT_BRACE);
-    case '}': return MakeToken(TOKEN_RIGHT_BRACE);
-    case ';': return MakeToken(TOKEN_SEMICOLON);
-    case '>': return MakeToken(TOKEN_GREATER);
-    case '<': return MakeToken(TOKEN_LESS);
-    case '|': return MakeToken(TOKEN_PIPE);
-    case '&': return MakeToken(TOKEN_AMPERSAND);
-    case '"': return String();
-    default:  return Word();
+    case '(':  return MakeToken(TOKEN_LEFT_PAREN);
+    case ')':  return MakeToken(TOKEN_RIGHT_PAREN);
+    case '{':  return MakeToken(TOKEN_LEFT_BRACE);
+    case '}':  return MakeToken(TOKEN_RIGHT_BRACE);
+    case ';':  return MakeToken(TOKEN_SEMICOLON);
+    case '>':  return MakeToken(TOKEN_GREATER);
+    case '<':  return MakeToken(TOKEN_LESS);
+    case '|':  return MakeToken(TOKEN_PIPE);
+    case '&':  return MakeToken(TOKEN_AMPERSAND);
+    case '=':  return MakeToken(TOKEN_EQUALS);
+    case '$':  {
+      if (Peek() == '(') {
+        Advance();
+        SkipToCurrent();
+        while (!IsAtEnd() && Peek() != ')') Advance();
+        Token nested = MakeToken(TOKEN_NESTED);
+        Advance(); // '('
+        return nested;
+      } else {
+        return MakeToken(TOKEN_DOLLAR);
+      }
+    }
+    case '\'': return SingleQuotedString();
+    case '"':  return DoubleQuotedString();
+    default:   return Word();
   }
 }
 

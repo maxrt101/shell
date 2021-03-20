@@ -22,6 +22,9 @@ enum TokenType : char {
   TOKEN_GREATER,      // '>'
   TOKEN_LESS,         // '>'
   TOKEN_AMPERSAND,    // '&'
+  TOKEN_EQUALS,       // '='
+  TOKEN_DOLLAR,       // '$'
+  TOKEN_NESTED,       // '$(..)'
   TOKEN_IDENTIFIER,   // \w+
   TOKEN_STRING,       // \".*\"
   TOKEN_NUMBER,       // \d+

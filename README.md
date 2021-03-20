@@ -7,10 +7,10 @@ This is simple implementation of unix command proccessor.
 ### Features
  - [X] Can run commands in PATH
  - [X] Pipes (cmd1 | cmd2)
- - [X] Output redirections (cmd > file)
+ - [X] Output redirection (cmd > file)
  - [X] Input redirection (cmd < file)
  - [X] Support for builtins
- - [ ] Variables support
+ - [X] Variables support
  - [ ] Aliases support
  - [ ] Customizable prompt
  - [ ] Start command in bg (cmd &)
