@@ -21,10 +21,10 @@ This is simple implementation of unix command proccessor.
  - `exit` - exits the shell
  - `cd` - change directory
  - `pwd` - current working directory
+ - `alias` - creates an alias (`alias la = "ls -la"`)
  - **PLANNED** `kill`
  - **PLANNED** `print`
  - **PLANNED** `echo`
- - `alias` - creates an alias (alias la = "ls -la")
  - **PLANNED** `declare` 
 
 ## Instalation
