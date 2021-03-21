@@ -167,6 +167,25 @@ bool shell::Shell::VarExists(std::string key) const {
 }
 
 
+bool shell::Shell::SetAlias(std::string key, std::string val) {
+  //bool exists = AliasExists(key);
+  aliases_.insert_or_assign(key, val);
+  return true;//exists;
+}
+
+
+std::string shell::Shell::GetAlias(std::string key) const {
+  if (AliasExists(key)) {
+    return aliases_.at(key);
+  }
+  return "";
+}
+
+
+bool shell::Shell::AliasExists(std::string key) const {
+  return aliases_.find(key) != aliases_.end();
+}
+
 std::string shell::Shell::GetPrompt() const {
   if (VarExists("PROMPT")) {
     return GetVar("PROMPT") + " ";
@@ -213,6 +232,31 @@ void shell::Shell::ParseLine(std::string input) {
 
   if (tokens.back().type == parser::TOKEN_ERROR) {
     logging::error("Error parsing command '%s': %s", input.c_str(), tokens.back().str.data());
+    return;
+  }
+
+  if (tokens[0].str == "alias") {
+    if (tokens.size() == 4) {
+      if (tokens[2].str == "=") {
+        SetAlias(tokens[1].str, tokens[3].str);
+        return;
+      } else {
+        logging::error("alias: ");
+        return;
+      }
+    } else {
+      logging::error("alias: ");
+      return;
+    }
+  }
+
+  if (AliasExists(tokens[0].str)) {
+    std::string alias = GetAlias(tokens[0].str);
+    alias += " ";
+    for (int i = 1; i < tokens.size(); i++) {
+      alias += tokens[i].str + " ";
+    }
+    ParseLine(alias);
     return;
   }
 

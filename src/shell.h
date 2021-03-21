@@ -54,6 +54,24 @@ class Shell {
    */
   bool VarExists(std::string key) const;
 
+  /** SetVar(string, string) - sets alias
+   * Returns false, if value existed, true - if created
+   * `key` - valias name
+   * `val` - alias value
+   */
+  bool SetAlias(std::string key, std::string val);
+
+  /** GetAlias(string) - returns alias value
+   * Returns empty string, if alias does not exist
+   * `key` - alias name
+   */
+  std::string GetAlias(std::string key) const;
+
+  /** AliasExists(string) - returns true if alias exists, false otherwise
+   * `key` - alias name
+   */
+  bool AliasExists(std::string key) const;
+
   /** GetPrompt() - returns prompt
    * If prompt is not defines, returns default prompt
    */
@@ -69,6 +87,7 @@ class Shell {
  private:
   bool running_ = false;
   std::map<std::string, std::string> variables_;
+  std::map<std::string, std::string> aliases_;
 };
 
 } // namespace shell

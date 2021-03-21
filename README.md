@@ -11,7 +11,7 @@ This is simple implementation of unix command proccessor.
  - [X] Input redirection (cmd < file)
  - [X] Support for builtins
  - [X] Variables support
- - [ ] Aliases support
+ - [X] Aliases support
  - [ ] Customizable prompt
  - [ ] Start command in bg (cmd &)
  - [ ] Jobs support
@@ -24,7 +24,7 @@ This is simple implementation of unix command proccessor.
  - **PLANNED** `kill`
  - **PLANNED** `print`
  - **PLANNED** `echo`
- - **PLANNED** `alias`
+ - `alias` - creates an alias (alias la = "ls -la")
  - **PLANNED** `declare` 
 
 ## Instalation
