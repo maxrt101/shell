@@ -70,25 +70,31 @@ static void SkipWhitespace() {
 }
 
 static Token SingleQuotedString() {
+  SkipToCurrent();
   while (Peek() != '\'' && !IsAtEnd()) {
     Advance();
   }
 
   if (IsAtEnd()) return ErrorToken("Unterminated string.");
 
+  Token token = MakeToken(TOKEN_STRING);
   Advance();
-  return MakeToken(TOKEN_STRING);
+  SkipToCurrent();
+  return token;
 }
 
 static Token DoubleQuotedString() {
+  SkipToCurrent();
   while (Peek() != '"' && !IsAtEnd()) {
     Advance();
   }
 
   if (IsAtEnd()) return ErrorToken("Unterminated string.");
 
+  Token token = MakeToken(TOKEN_STRING);
   Advance();
-  return MakeToken(TOKEN_STRING);
+  SkipToCurrent();
+  return token;
 }
 
 static Token Number() {

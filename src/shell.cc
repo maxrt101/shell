@@ -206,8 +206,10 @@ void shell::Shell::ParseLine(std::string input) {
   std::vector<parser::Token> tokens = parser::SplitLine(input);
   if (tokens.size() == 0) return;
 
-  // std::cout << "CMD:" << tokens.size() << "\n";
-  // for (auto& token : tokens) std::cout << "\t" << static_cast<int>(token.type) << " " << token.str << "\n";
+#ifdef _DEBUG
+  std::cout << "CMD:" << tokens.size() << "\n";
+  for (auto& token : tokens) std::cout << "\t" << static_cast<int>(token.type) << " " << token.str << "\n";
+#endif
 
   if (tokens.back().type == parser::TOKEN_ERROR) {
     logging::error("Error parsing command '%s': %s", input.c_str(), tokens.back().str.data());
@@ -218,7 +220,7 @@ void shell::Shell::ParseLine(std::string input) {
     if (tokens[1].type == parser::TOKEN_EQUALS) {
       std::string value;
       for (int i = 2; i < tokens.size(); i++) {
-        value += tokens[i].str;
+        value += tokens[i].str + " ";
       }
       SetVar(tokens[0].str, value);
       return;
@@ -272,6 +274,11 @@ void shell::Shell::ParseLine(std::string input) {
       itr->type = parser::TOKEN_IDENTIFIER; // Set another type to prevent infinite loop
     }
   }
+
+#ifdef _DEBUG
+  std::cout << "CMD FINAL:" << tokens.size() << "\n";
+  for (auto& token : tokens) std::cout << "\t" << static_cast<int>(token.type) << " " << token.str << "\n";
+#endif
 
   cmd.commands.push_back(SimpleCommand(beg, tokens.end()));
   cmd.Execute();
